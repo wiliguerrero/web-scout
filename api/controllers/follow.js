@@ -82,14 +82,14 @@ async function followUserIds(user_id){
 	// Procesar following ids
 	var following_clean = [];
 
-	following.forEach((follow) => {
+	following.foreach((follow) => {
 		following_clean.push(follow.followed);
 	});
 	
 	// Procesar followed ids
 	var followed_clean = [];
 
-	followed.forEach((follow) => {
+	followed.foreach((follow) => {
 		followed_clean.push(follow.user);
 	});
 	
