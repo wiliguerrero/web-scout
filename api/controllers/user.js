@@ -150,7 +150,7 @@ async function followThisUser(identity_user_id, user_id){
 }
 
 // Devolver un listado de usuarios paginado
-function getUsers(req, res){
+async function getUsers(req, res){
 	var identity_user_id = req.user.sub;
 
 	var page = 1;
@@ -160,7 +160,7 @@ function getUsers(req, res){
 
 	var itemsPerPage = 5;
 
-	User.find().sort('_id').paginate(page, itemsPerPage, (err, users, total) => {
+	await User.find().sort('_id').paginate(page, itemsPerPage, (err, users, total) => {
 		if(err) return res.status(500).send({message: 'Error en la petición'});
 
 		if(!users) return res.status(404).send({message: 'No hay usuarios disponibles'});
