@@ -70,7 +70,7 @@ function getFollowingUsers(req, res){
 	});
 }
 
-async function followUserIds(user_id){
+/*async function followUserIds(user_id){
 	var following = await Follow.find({"user":user_id}).select({'_id':0, '__v':0, 'user':0}).exec((err, follows) => {
 		return follows;
 	});
@@ -97,8 +97,39 @@ async function followUserIds(user_id){
 		following: following_clean,
 		followed: followed_clean
 	}
-}
+}*/
 
+async function followUserIds(user_id) {
+    var following = await Follow.find({ "user": user_id }).select({ '_id': 0, '__v': 0, 'user': 0 }).exec().then((follows) => {
+
+        var follows_clean = [];
+        follows.forEach((follow) => {
+            follows_clean.push(follow.followed);
+        });
+        return follows_clean;
+
+    }).catch((err) => {
+        return handleError(err);
+    });
+
+
+    var followed = await Follow.find({ "followed": user_id }).select({ '_id': 0, '__v': 0, 'followed': 0 }).exec().then((follows) => {
+
+        var follows_clean = [];
+        follows.forEach((follow) => {
+            follows_clean.push(follow.user);
+        });
+        return follows_clean;
+
+    }).catch((err) => {
+        return handleError(err);
+    });
+
+    return {
+        following,
+        followed
+    }
+}
 
 function getFollowedUsers(req, res){
 	var userId = req.user.sub;
