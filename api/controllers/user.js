@@ -192,14 +192,14 @@ async function followUserIds(user_id){
 	// Procesar following ids
 	var following_clean = [];
 
-	following.forEach((follow) => {
+	following.foreach((follow) => {
 		following_clean.push(follow.followed);
 	});
 	
 	// Procesar followed ids
 	var followed_clean = [];
 
-	followed.forEach((follow) => {
+	followed.foreach((follow) => {
 		followed_clean.push(follow.user);
 	});
 	
@@ -262,7 +262,7 @@ function updateUser(req, res){
 		 ]}).exec((err, users) => {
 		 
 		 	var user_isset = false;
-		 	users.forEach((user) => {
+		 	users.foreach((user) => {
 		 		if(user && user._id != userId) user_isset = true;
 		 	});
 
