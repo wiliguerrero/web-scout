@@ -1,3 +1,1 @@
-node_modules
-.env
-upload
+/node_modules
