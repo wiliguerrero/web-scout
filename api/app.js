@@ -37,7 +37,7 @@ app.use('/api',require('./routes/user'));
 app.use('/api',require('./routes/follow'));
 app.use('/api',require('./routes/publication'));
 app.use('/api',require('./routes/message'));
-//app.use('/api',require('./routes/solicitarInsignia.routes'));
+app.use('/api',require('./routes/solicitarInsignia.routes'));
 //exportar
 
 //static files
