@@ -1,9 +1,32 @@
 const Employee = require('../models/solicitarInsignia');
+const User = require('../models/user');
 
 const employeeCtrl = {};
 
-employeeCtrl.getEmployees = async (req, res, next) => {
+/*employeeCtrl.getEmployees = async (req, res, next) => {
     const employees = await Employee.find();
+    res.json(employees);
+};*/
+
+
+employeeCtrl.getEmployees = async (req, res, next) => {
+    var userId = req.user.sub;
+    console.log('holaaa ' + userId);
+    const employees = await Employee.find({solicitante:userId});
+    console.log(employees);
+    res.json(employees);
+};
+employeeCtrl.getSolicitudesJ = async (req, res, next) => {
+    var userId = req.user.sub;    
+    console.log('holaaa ' + userId);
+    const usuarioLogueado = await User.findOne({_id:userId});
+    const cum = usuarioLogueado.cum;
+    
+console.log('Esta es mi cum ' + cum);
+    const employees = await Employee.find({cum:cum});
+
+    console.log(employees);
+    
     res.json(employees);
 };
 
@@ -14,14 +37,15 @@ employeeCtrl.createEmployee = async (req, res, next) => {
         color: req.body.color,
         fecha:req.body.fecha,
         cum:req.body.cum,
-        areaCa:req.body.areaCa,
-        miniTecNudos:req.body.miniTecNudos,
-        miniTecAmarres:req.body.miniTecAmarres,
+        areaCabuyeria:req.body.areaCabuyeria,
+        areaCapismo:req.body.areaCapismo,
+        areaExploracion:req.body.areaExploracion,        
         destresa1:req.body.destresa1,
         destresa2:req.body.destresa2,
         destresa3:req.body.destresa3,
         archivoEvidencia:req.body.archivoEvidencia,
-        seccion:req.body.seccion
+        seccion:req.body.seccion,
+        solicitante:req.body.solicitante
         
     });
     await employee.save();
@@ -42,9 +66,9 @@ employeeCtrl.editEmployee = async (req, res, next) => {
         color: req.body.color,
         fecha:req.body.fecha,
         cum:req.body.cum,
-        areaCa:req.body.areaCa,
-        miniTecNudos:req.body.miniTecNudos,
-        miniTecAmarres:req.body.miniTecAmarres,
+        areaCabuyeria:req.body.areaCabuyeria,
+        areaCapismo:req.body.areaCapismo,
+        areaExploracion:req.body.areaExploracion,        
         destresa1:req.body.destresa1,
         destresa2:req.body.destresa2,
         destresa3:req.body.destresa3,

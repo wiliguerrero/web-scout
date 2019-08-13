@@ -1,15 +1,15 @@
 'use strict'
 
-//var path = require('path');
-
+var path = require('path');
+var fs = require('fs');
 var moment = require('moment');
 var mongoosePaginate = require('mongoose-pagination');
 const cloudinary = require('cloudinary');
-var Publication = require('../models/publication');
 var Foto = require('../models/foto');
 var User = require('../models/user');
-var fs=require('fs-extra');
 var Follow = require('../models/follow');
+var fs=require('fs-extra');
+var User = require('../models/user');
 
 
 cloudinary.config({
@@ -17,84 +17,28 @@ cloudinary.config({
     api_key: '942481193345364',
     api_secret: 'ZAb_1D9MMleCJs4XzMtFIkIkA1U'
 });
-
 function probando(req, res){
 	res.status(200).send({
 		message: "Hola desde el CONTROLADOR DE PUBLICACIONES"
 	});
 }
 
-/*async function savePublication(req, res){
-const { title, description } = req.body;
-    const result = await cloudinary.v2.uploader.upload(req.file.path);
-    const publicacion = new Publication({
-        user:title,
-        text:description,               
-		file: result.url,
-		created_at:moment().unix(),
-        public_id: result.public_id
-	});
+async function saveFoto(req, res){
 
-console.log('Mi publicacion lleva lo siguiente ' + publicacion);
-    await publicacion.save((err, publicationStored) => {
-		if(err) return res.status(500).send({message: 'Error al guardar la publicación'});
-
-		if(!publicationStored) return res.status(404).send({message: 'La publicación NO ha sido guardada'});
-
-		return res.status(200).send({publication: publicationStored});
-	});
-
-    await fs.unlink(req.file.path);
-    //res.json({ status: "Menu saved!" });
-
-
-	var params = req.body;
-	const result = await cloudinary.v2.uploader.upload(req.file.path);
-	console.log('Aqui esta el result' + result);
-	if(!params.text) return res.status(200).send({message: 'Debes enviar un texto!!'});
-
-	var publication = new Publication();
-	publication.text = params.text;
-	publication.file = 'null';
-	publication.user = req.user.sub;
-	publication.created_at = moment().unix();
-
-	publication.save((err, publicationStored) => {
-		if(err) return res.status(500).send({message: 'Error al guardar la publicación'});
-
-		if(!publicationStored) return res.status(404).send({message: 'La publicación NO ha sido guardada'});
-
-		return res.status(200).send({publication: publicationStored});
-	});
-
-}*/
-
-async function savePublication(req, res){
-
-	//console.log(' Aqui esta mi body ' + req.body);
-	const {description} = req.body;
+	//console.log(' Aqui esta mi body '+req.body);
+	
 	var userId = req.params.id;
-	console.log("AQUI ESTAA MI ID PARA METER A LA PUB " + userId);
 	const result = await cloudinary.v2.uploader.upload(req.file.path)
 	console.log(result);
- 
-    const pub =	new Publication({
-	text : description,
+   
+    const foto =	new Foto({
 	file : result.url,
-	user:userId,
-	created_at:moment().unix(),
+	user : userId,
 	public_id :result.public_id
 	});
-
-	const foto = new Foto({
-		file:result.url,
-		public_id:result.public_id,
-		user:userId
-	});
-	console.log('Aqui estan mis datos de mi foto --->'+pub );
+	console.log('Aqui estan mis datos de mi foto --->'+foto);
 	
 
-	await pub.save();
 	await foto.save();
 	/*(err, publicationStored) => {
 		if(err) return res.status(500).send({message: 'Error al guardar la publicación'});
@@ -105,9 +49,13 @@ async function savePublication(req, res){
 	});*/
 	await fs.unlink(req.file.path);
 	//console.log(" Aqui esta mi url para insertar "+result.url + " Este es mi ID " +title );
-	
-	res.json({ status: "publicacion saved!" });
+	const us = await User.findById(userId);
+	us.image = result.url;
+	console.log('mi nuevo usuario es  '+us);
+	await User.findByIdAndUpdate(userId,us);	
+	res.json({ status: "Foto saved!" });
 }
+
 function getPublications(req, res){
 	var page = 1;
 	if(req.params.page){
@@ -143,6 +91,19 @@ function getPublications(req, res){
 	});
 }
 
+async function getFotosUser(req, res, next){
+	const { id } = req.params;
+	const employee = await	Foto.find({user:id}, (err, user) => {
+		if(err) return res.status(500).send({message: 'Error en la petición'});
+
+		if(!user) return res.status(404).send({message: 'La foto no existe'});
+
+		return res.json(user);
+		
+	});
+	
+	console.log('Aqui van tus foto ' + employee);
+};
 
 function getPublicationsUser(req, res){
 	var page = 1;
@@ -173,18 +134,44 @@ function getPublicationsUser(req, res){
 
 }
 
-function getPublication(req, res){
-	var publicationId = req.params.id;
+async function getFoto(req, res, next){
+	const { id } = req.params;
+	const employee = await	Foto.findOne({user:id}, (err, user) => {
+		if(err) return res.status(500).send({message: 'Error en la petición'});
 
-	Publication.findById(publicationId, (err, publication) => {
+		if(!user) return res.status(404).send({message: 'La foto no existe'});
+
+		return res.json(user);
+		
+	});
+	
+	console.log('Aqui va tu foto ' + employee);
+};
+
+/*async function getFoto(req, res){
+
+	const { id } = req.params;
+	const employee = await	Foto.findOne({user:id});
+	console.log(employee);
+    res.json(employee);
+
+	
+
+ /*const publication = await	Foto.find({user:foto}, (err, foto) => {
 		if(err) return res.status(500).send({message: 'Error devolver publicaciones'});
 
-		if(!publication) return res.status(404).send({message: 'No existe la publicación'});
+		if(!foto) return res.status(404).send({message: 'No existe la publicación'});
 
-		return res.status(200).send({publication});
+		return res.status(200).send({foto});
+
+		
 	});
-}
 
+	console.log('Aqui esta tu  foto'+publication);
+
+	
+}
+*/
 function deletePublication(req, res){
 	var publicationId = req.params.id;
 
@@ -255,10 +242,11 @@ function getImageFile(req, res){
 
 module.exports = {
 	probando,
-	savePublication,
+	saveFoto,
 	getPublications,
 	getPublicationsUser,
-	getPublication,
+	getFoto,
+	getFotosUser,
 	deletePublication,
 	uploadImage,
 	getImageFile

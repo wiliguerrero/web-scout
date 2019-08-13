@@ -37,6 +37,7 @@ function saveUser(req, res){
 		user.email = params.email;
 		user.role = 'ROLE_USER';
 		user.image = null;
+		user.tipoScout = params.tipoScout;
 
 		// Controlar usuarios duplicados
 		User.find({ $or: [
@@ -253,17 +254,17 @@ function getCounters(req, res){
 }
 
 /*async function getCountFollow(user_id){
-	var following = await Follow.countDocuments({"user":user_id}).exec((err, count) => {
+	var following = await Follow.count({"user":user_id}).exec((err, count) => {
 		if(err) return handleError(err);
 		return count;
 	});
 
-	var followed = await Follow.countDocuments({"followed":user_id}).exec((err, count) => {
+	var followed = await Follow.count({"followed":user_id}).exec((err, count) => {
 		if(err) return handleError(err);
 		return count;
 	});
 
-	var publications = await Publication.countDocuments({"user":user_id}).exec((err, count) => {
+	var publications = await Publication.count({"user":user_id}).exec((err, count) => {
 		if(err) return handleError(err);
 		return count;
 	});
@@ -276,19 +277,19 @@ function getCounters(req, res){
 }*/
 
 async function getCountFollow(user_id) {
-    var following = await Follow.countDocuments({ "user": user_id }).exec().then((count) => {
+    var following = await Follow.count({ "user": user_id }).exec().then((count) => {
         return count;
     }).catch((err) => {
         return handleError(err);
     });
 
-    var followed = await Follow.countDocuments({ "followed": user_id }).exec().then((count) => {
+    var followed = await Follow.count({ "followed": user_id }).exec().then((count) => {
         return count;
     }).catch((err) => {
         return handleError(err);
     });
 
-    var publications = await Publication.countDocuments({ "user": user_id }).exec().then((count) => {
+    var publications = await Publication.count({ "user": user_id }).exec().then((count) => {
         return count;
     }).catch((err) => {
         return handleError(err);
