@@ -175,7 +175,7 @@ async function getFoto(req, res, next){
 function deletePublication(req, res){
 	var publicationId = req.params.id;
 
-	Publication.find({'user': req.user.sub, '_id': publicationId}).remove(err => {
+	Foto.find({'_id': publicationId}).remove(err => {
 		if(err) return res.status(500).send({message: 'Error al borrar publicaciones'});
 		
 		return res.status(200).send({message: 'Publicación eliminada correctamente'});
