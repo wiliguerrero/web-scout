@@ -37,6 +37,7 @@ function saveUser(req, res){
 		user.email = params.email;
 		user.role = 'ROLE_USER';
 		user.image = null;
+		user.cum = params.cum;;
 		user.tipoScout = params.tipoScout;
 
 		// Controlar usuarios duplicados
