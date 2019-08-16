@@ -141,7 +141,7 @@ text-align: center;
 
 #user-card, #new-publication{
 	padding: 25px;
-	width: 32%;
+	/*width: 32%;*/
 }
 
 #new-publication{
